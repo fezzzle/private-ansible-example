@@ -1,0 +1,41 @@
+export ZSH="{{ ansible_env.HOME }}/.oh-my-zsh"
+ZSH_THEME="ys"
+
+plugins=(
+  git
+  docker
+  common-aliases
+  sudo
+  ssh-agent
+  encode64
+  npm
+  python
+  yarn
+)
+
+source $ZSH/oh-my-zsh.sh
+
+EDITOR='vim'
+
+#set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+	PATH="$HOME/bin:$PATH"
+fi
+
+GOPATH=$(go env GOPATH)
+PATH="${GOPATH}/bin:$PATH"
+PATH="$HOME/.poetry/bin:$PATH"
+
+[ -s "/usr/share/nvm/init-nvm.sh" ] && source /usr/share/nvm/init-nvm.sh
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '{{ ansible_env.HOME }}/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '{{ ansible_env.HOME }}/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '{{ ansible_env.HOME }}/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '{{ ansible_env.HOME }}/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+
+# Environment aliases
+alias fenv="{{ ansible_env.HOME }}/environments/fabric-environment/activate.sh"
+
+# Environment activation on startup
+if [ -z "${INITIAL_VIRTUALENV_PATH}" ]; then ; else echo "Using virtualenv ${INITIAL_VIRTUALENV_PATH}"; source ${INITIAL_VIRTUALENV_PATH}/bin/activate; fi

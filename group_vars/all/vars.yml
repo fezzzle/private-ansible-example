@@ -1,0 +1,16 @@
+gpg_public_key: |
+  -----BEGIN PGP PUBLIC KEY BLOCK-----
+  <KEY_DATA_HERE>
+  -----END PGP PUBLIC KEY BLOCK-----
+
+
+ssh_public_key_rsa: |
+  ssh-rsa <KEY_DATA_HERE>
+
+ssh_public_key_ed25519: |
+  ssh-ed25519 <KEY_DATA_HERE>
+
+docker_compose_version: 1.29.2
+
+git_user_name: "Name Lastname"
+git_user_email: "someone@thorgate.eu"

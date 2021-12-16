@@ -1,0 +1,32 @@
+- name: Create needed directories
+  file:
+      path: "{{ ansible_env.HOME }}/.ssh"
+      state: directory
+
+- name: Extract rsa private key from vault
+  template:
+    src: id_rsa
+    dest: "{{ ansible_env.HOME }}/.ssh/id_rsa"
+    mode: 0600
+  when: ssh_private_key_rsa | length > 0
+
+- name: Extract rsa public key from vault
+  template:
+    src: id_rsa.pub
+    dest: "{{ ansible_env.HOME }}/.ssh/id_rsa.pub"
+    mode: 0644
+  when: ssh_public_key_rsa | length > 0
+
+- name: Extract ed25519 private key from vault
+  template:
+    src: id_ed25519
+    dest: "{{ ansible_env.HOME }}/.ssh/id_ed25519"
+    mode: 0600
+  when: ssh_private_key_rsa | length > 0
+
+- name: Extract ed25519 public key from vault
+  template:
+    src: id_ed25519.pub
+    dest: "{{ ansible_env.HOME }}/.ssh/id_ed25519.pub"
+    mode: 0644
+  when: ssh_public_key_rsa | length > 0

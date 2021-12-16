@@ -1,0 +1,39 @@
+- name: Extract private key from vault
+  template:
+    src: private.key
+    dest: "{{ ansible_env.HOME }}/private.key"
+    mode: 0600
+
+- name: Import gpg private key
+  command: >
+    gpg --batch
+    --no-tty
+    --passphrase {{ gpg_passphrase }}
+    --trust-model always
+    --import "{{ ansible_env.HOME }}/private.key"
+
+- name: Trust the imported gpg key
+  shell: >
+    echo "{{ gpg_key_fingerprint }}:6:" | gpg --batch
+    --import-ownertrust
+
+- name: Cleanup private key
+  file:
+    path: "{{ ansible_env.HOME }}/private.key"
+    state: absent
+
+- name: Configure git to use signing key
+  command: >
+    git config --global user.signingkey {{ gpg_key_fingerprint }}
+
+- name: Configure git email
+  command: >
+    git config --global user.email "{{ git_user_email }}"
+
+- name: Configure git name
+  command: >
+    git config --global user.name "{{ git_user_name }}"
+
+- name: Configure git signing
+  command: >
+    git config --global commit.gpgsign true

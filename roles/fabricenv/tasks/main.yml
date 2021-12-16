@@ -1,0 +1,32 @@
+- name: "Create needed directories"
+  file:
+      path: "{{ ansible_env.HOME }}/environments/fabric-environment/"
+      state: directory
+
+- name: Install pyproject.toml
+  template:
+    src: pyproject.toml
+    dest: "{{ ansible_env.HOME }}/environments/fabric-environment/pyproject.toml"
+    mode: 0644
+
+- name: Use python 2.7
+  shell:
+    cd "{{ ansible_env.HOME }}/environments/fabric-environment/" && poetry env use python2.7
+
+- name: Lock poetry
+  shell:
+    cd "{{ ansible_env.HOME }}/environments/fabric-environment/" && poetry lock
+
+- name: Install old version of pip
+  shell:
+    cd "{{ ansible_env.HOME }}/environments/fabric-environment/" && poetry run pip install pip==19.3.1
+
+- name: Install rest of the dependencies
+  shell:
+    cd "{{ ansible_env.HOME }}/environments/fabric-environment/" && poetry install
+
+- name: Install activation script
+  template:
+    src: activate.sh
+    dest: "{{ ansible_env.HOME }}/environments/fabric-environment/activate.sh"
+    mode: 0755

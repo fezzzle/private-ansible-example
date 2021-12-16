@@ -1,0 +1,21 @@
+gpg_private_key: |
+  -----BEGIN PGP PRIVATE KEY BLOCK-----
+  <KEY_DATA_HERE>
+  -----END PGP PRIVATE KEY BLOCK-----
+
+
+gpg_key_fingerprint: <fingerprint>>
+
+gpg_passphrase: <passphrase>
+
+
+ssh_private_key_rsa: |
+  -----BEGIN RSA PRIVATE KEY-----
+  <KEY_DATA_HERE>
+  -----END RSA PRIVATE KEY-----
+
+
+ssh_private_key_ed25519: |
+  -----BEGIN OPENSSH PRIVATE KEY-----
+  <KEY_DATA_HERE>
+  -----END OPENSSH PRIVATE KEY-----

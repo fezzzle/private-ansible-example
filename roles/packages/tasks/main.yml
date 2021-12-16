@@ -1,0 +1,94 @@
+- name: Run the equivalent of "pacman -Syu" as a separate step
+  community.general.pacman:
+    update_cache: yes
+  become: yes
+
+- name: Install sudo
+  community.general.pacman:
+    name: sudo
+    state: present
+  become: yes
+
+- name: Allow user to run `sudo pacman` without a password
+  lineinfile:
+    path: /etc/sudoers.d/11-install-aur_builder
+    line: '{{ ansible_env.USER }} ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+    create: yes
+    validate: 'visudo -cf %s'
+  become: yes
+
+- name: Install yay
+  kewlfft.aur.aur:
+    name: yay
+    use: makepkg
+    state: present
+
+- name: Install packages
+  community.general.pacman:
+    name: "{{ item }}"
+    state: present
+  become: yes
+  loop:
+    - "ttf-liberation"
+    - "noto-fonts-emoji"
+    - "noto-fonts"
+    - "zsh"
+    - "gnupg"
+    - "firefox"
+    - "python"
+    - "openssh"
+    - "bitwarden-cli"
+    - "python2"
+    - "docker"
+    - "openfortivpn"
+    - "vi"
+    - "nano" # This is required for project template make setup
+    - "gimp"
+    - "htop"
+    - "discord" # For code club
+    - "vlc"
+    - "jq" # This is required for project template ansible mirror_prepare.sh
+    - "yq" # This is required for project template ansible mirror_prepare.sh
+    - "aws-cli"
+    - "gparted"
+
+- name: Install AUR packages
+  kewlfft.aur.aur:
+    name: "{{ item }}"
+    use: makepkg
+    state: present
+  loop:
+    - "google-chrome"
+    - "pycharm-professional"
+    - "python36"
+    - "python37"
+    - "python38"
+    - "openfortigui"
+    - "slack-desktop"
+    - "nvm"
+
+- name: Enable docker service
+  service:
+    name: docker
+    enabled: yes
+    state: started
+  become: yes
+
+- name: Allow running docker
+  user:
+    name: "{{ ansible_env.USER }}"
+    groups: "docker"
+    append: yes
+  become: yes
+
+- name: Install docker compose python package
+  pip:
+    name: docker-compose=={{ docker_compose_version }}
+  become: yes
+
+- name: Install Docker Compose
+  get_url:
+    url: https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: "a+x"
+  become: yes

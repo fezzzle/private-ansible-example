@@ -1,0 +1,9 @@
+- name: "Install stuff"
+  hosts: localhost
+  connection: local
+  roles:
+    - { role: packages }
+    - { role: gpgkey }
+    - { role: sshkey }
+    - { role: fabricenv }
+    - { role: zsh }
