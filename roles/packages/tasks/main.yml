@@ -1,94 +1,58 @@
-- name: Run the equivalent of "pacman -Syu" as a separate step
-  community.general.pacman:
+- name: Update apt and install apt packages
+  apt:
+    name: "{{ item }}"
+    state: present
     update_cache: yes
   become: yes
-
-- name: Install sudo
-  community.general.pacman:
-    name: sudo
-    state: present
-  become: yes
-
-- name: Allow user to run `sudo pacman` without a password
-  lineinfile:
-    path: /etc/sudoers.d/11-install-aur_builder
-    line: '{{ ansible_env.USER }} ALL=(ALL) NOPASSWD: /usr/bin/pacman'
-    create: yes
-    validate: 'visudo -cf %s'
-  become: yes
-
-- name: Install yay
-  kewlfft.aur.aur:
-    name: yay
-    use: makepkg
-    state: present
-
-- name: Install packages
-  community.general.pacman:
-    name: "{{ item }}"
-    state: present
-  become: yes
   loop:
-    - "ttf-liberation"
-    - "noto-fonts-emoji"
-    - "noto-fonts"
+    - "build-essential"
+    - "libssl-dev"
+    - "python3-distutils"
+    - "bluez" 
+    - "bluez-tools"
+    - "blueman" # Bluetooth manager blueman-manager
+    - "curl"
+    - "terminator"
+    - "vim"
     - "zsh"
-    - "gnupg"
-    - "firefox"
-    - "python"
-    - "openssh"
-    - "bitwarden-cli"
-    - "python2"
-    - "docker"
     - "openfortivpn"
-    - "vi"
-    - "nano" # This is required for project template make setup
-    - "gimp"
     - "htop"
-    - "discord" # For code club
-    - "vlc"
-    - "jq" # This is required for project template ansible mirror_prepare.sh
-    - "yq" # This is required for project template ansible mirror_prepare.sh
-    - "aws-cli"
-    - "gparted"
+    - "tldr"
+    - "awscli"
+    - "pavucontrol" # volume control
+    - "ffmpeg"
+    - "i3"
+    # - "docker" # Not sure if this is the correct package name for docker
 
-- name: Install AUR packages
-  kewlfft.aur.aur:
+    #TODO - ohmyzsh
+    #TODO - "nvm"
+      # TODO - install node
+      # TODO - then can be joplin-cli installed
+        # npm -g install joplin
+
+    #TODO - "pyenv" https://www.liquidweb.com/kb/how-to-install-pyenv-on-ubuntu-18-04/
+    #TODO - "jq" # This is required for project template ansible mirror_prepare.sh
+    #TODO - "yq" # This is required for project template ansible mirror_prepare.sh
+    
+- name: Install snap packages
+  snap:
+    classic: yes
     name: "{{ item }}"
-    use: makepkg
     state: present
+  become: yes
   loop:
-    - "google-chrome"
     - "pycharm-professional"
-    - "python36"
-    - "python37"
-    - "python38"
-    - "openfortigui"
-    - "slack-desktop"
-    - "nvm"
+    - "discord"
+    - "vlc"
+    - "gitkraken"
+    - "slack"
+    - "spotify"
+    - "gimp"
+    - "bw"
+    - "micro"
 
-- name: Enable docker service
-  service:
-    name: docker
-    enabled: yes
-    state: started
-  become: yes
+# Running and install docker is not working correctly on ubuntu. Need to be implemented
+# https://docs.docker.com/engine/install/ubuntu/
 
-- name: Allow running docker
-  user:
-    name: "{{ ansible_env.USER }}"
-    groups: "docker"
-    append: yes
-  become: yes
-
-- name: Install docker compose python package
-  pip:
-    name: docker-compose=={{ docker_compose_version }}
-  become: yes
-
-- name: Install Docker Compose
-  get_url:
-    url: https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
-    dest: /usr/local/bin/docker-compose
-    mode: "a+x"
-  become: yes
+# One example found from digital ocean - did not manage to get it working properly
+# https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-20-04
